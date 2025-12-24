@@ -6,14 +6,20 @@ struct T {
         return 'T';
     }
 };
+struct T1 {
+    int x;
+    virtual char f() {
+        return 'T';
+    }
+};
 
-struct S : virtual T {
+struct S : virtual T, virtual T1 {
     int x;
     char f() override {
         return 'S';
     }
 };
-struct A : virtual T {
+struct A : virtual T, virtual T1 {
     int x;
     char f() override {
         return 'A';
@@ -36,6 +42,8 @@ int main() {
     assert(internal::GetMostDerived(ar) == (void*)v);
     assert(DynamicCast<T*>(v));
     assert(DynamicCast<S*>(ar));
+    assert(DynamicCast<T1*>(ar) == DynamicCast<T1*>(sr));
+    assert(DynamicCast<T*>(ar) == DynamicCast<T*>(sr));
     assert(DynamicCast<A*>(sr));
     assert(DynamicCast<V*>(tp)->f() == 'V');
     assert(DynamicCast<S*>(ar)->f() == 'V');
