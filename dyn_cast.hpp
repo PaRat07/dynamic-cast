@@ -38,7 +38,8 @@ const void* DynamicUpcast(const void* obj, const std::type_info* typeinfo_from, 
             const void* base_obj;
             bool public_base = bcti->__offset_flags & abi::__base_class_type_info::__public_mask;
             if (bcti->__offset_flags & abi::__base_class_type_info::__virtual_mask) {
-                base_obj = static_cast<const char*>(GetMostDerived(obj)) + *(static_cast<const ptrdiff_t*>(GetVtablePtr(obj)) + (bcti->__offset_flags >> 8));
+
+                base_obj = static_cast<const char*>(GetMostDerived(obj)) + *reinterpret_cast<const ptrdiff_t*>(static_cast<const char*>(GetVtablePtr(GetMostDerived(obj))) + (bcti->__offset_flags >> 8));
             } else {
                 base_obj = static_cast<const char*>(obj) + (bcti->__offset_flags >> 8);
             }
