@@ -26,7 +26,7 @@ struct V : S, A {
   char f() override { return 'V'; }
 };
 
-int main() {
+void Test() {
   V *v = new V;
   A *ar = v;
   S *sr = v;
@@ -40,7 +40,8 @@ int main() {
   assert(DynamicCast<A *>(sr));
   assert(DynamicCast<V *>(tp)->f() == 'V');
   assert(DynamicCast<S *>(ar)->f() == 'V');
-  return 0;
+  std::cout << "Hand-Written test passed.\n";
+
 }
 } // namespace not_ai
 
@@ -102,7 +103,7 @@ int main() {
   TestVirtualInheritance();
   TestNullForWrongCast();
   TestAmbiguity();
-  not_ai::main();
+  not_ai::Test();
 
   std::cout << "All tests finished.\n";
 }
