@@ -1,7 +1,7 @@
 # Dynamic cast written in c++
 
 My target was to practice my c++ rtti knowledge. \
-This is implementation of dynamic_cast. For more experience I didnt use some language features:
+This is implementation of dynamic_cast for itanium abi. For more experience I didnt use some language features:
 - typeid(expr)
 - dynamic_cast
 - any libraries(except <typeinfo> and cxxabi.h for types of typeinfo(like abi::__si_class_type_info))\
