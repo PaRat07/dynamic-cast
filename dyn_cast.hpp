@@ -21,6 +21,10 @@ const std::type_info* Typeid(const void* obj) {
     return *(reinterpret_cast<const std::type_info*const*>(GetVtablePtr(obj)) - 1);
 }
 
+const void* GetMostDerived(const void* ptr) {
+    return static_cast<const char*>(ptr) + *(static_cast<const ptrdiff_t*>(GetVtablePtr(ptr)) - 2);
+}
+
 const void* DynamicUpcast(const void* obj, const std::type_info* typeinfo_from, const std::type_info* typeinfo_to, bool& ambigous_or_private) {
     if (Equal(typeinfo_from, typeinfo_to)) {
         return obj;
@@ -34,7 +38,7 @@ const void* DynamicUpcast(const void* obj, const std::type_info* typeinfo_from, 
             const void* base_obj;
             bool public_base = bcti->__offset_flags & abi::__base_class_type_info::__public_mask;
             if (bcti->__offset_flags & abi::__base_class_type_info::__virtual_mask) {
-                base_obj = static_cast<const char*>(obj) + *(static_cast<const ptrdiff_t*>(GetVtablePtr(obj)) + (bcti->__offset_flags >> 8));
+                base_obj = static_cast<const char*>(GetMostDerived(obj)) + *(static_cast<const ptrdiff_t*>(GetVtablePtr(obj)) + (bcti->__offset_flags >> 8));
             } else {
                 base_obj = static_cast<const char*>(obj) + (bcti->__offset_flags >> 8);
             }
@@ -43,7 +47,7 @@ const void* DynamicUpcast(const void* obj, const std::type_info* typeinfo_from, 
                 return nullptr;
             }
             if (cast_candidate) {
-                if (result || !public_base) {
+                if (result && cast_candidate != result || !public_base) {
                     ambigous_or_private = true;
                     return nullptr;
                 } else {
@@ -56,10 +60,6 @@ const void* DynamicUpcast(const void* obj, const std::type_info* typeinfo_from, 
         return nullptr;
     }
 
-}
-
-const void* GetMostDerived(const void* ptr) {
-    return static_cast<const char*>(ptr) + *(static_cast<const ptrdiff_t*>(GetVtablePtr(ptr)) - 2);
 }
 
 const void* DynamicCastImpl(const void* ptr, const std::type_info* typeinfo_to) {
@@ -83,7 +83,7 @@ struct PtrTrats {
 template<typename T>
 struct PtrTrats<T*> {
     static constexpr bool is_ptr = true;
-    using deref_t = void;
+    using deref_t = T;
     using cv = void;
 };
 

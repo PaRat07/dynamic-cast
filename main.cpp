@@ -34,6 +34,7 @@ int main() {
     T* tp = v;
     assert(internal::Typeid(ar) == &typeid(*ar));
     assert(internal::GetMostDerived(ar) == (void*)v);
+    assert(DynamicCast<T*>(v));
     assert(DynamicCast<S*>(ar));
     assert(DynamicCast<A*>(sr));
     assert(DynamicCast<V*>(tp)->f() == 'V');
